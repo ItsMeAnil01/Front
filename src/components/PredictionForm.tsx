@@ -31,14 +31,13 @@ type UserHealthData = z.infer<typeof formSchema>;
 
 const PredictionForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [prediction, setPrediction] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const form = useForm<UserHealthData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       age: 45,
-      sex: 1, // Default to male (1)
+      sex: 1,
       cp: 0,
       trestbps: 120,
       chol: 200,
@@ -55,18 +54,14 @@ const PredictionForm = () => {
 
   const onSubmit = async (data: UserHealthData) => {
     setIsSubmitting(true);
-    setPrediction(null);
-
     try {
       const response = await predictHeartRisk(data);
-      setPrediction(response['Heart Attack Risk']);
+      sessionStorage.setItem('predictionResult', JSON.stringify(response));
       toast.success("Prediction completed successfully!");
-      // Optionally navigate to results page
-      // sessionStorage.setItem('predictionResult', JSON.stringify(response));
-      // navigate('/results');
+      navigate('/results');
     } catch (error: any) {
       console.error("Error submitting form:", error);
-      toast.error(error.message || "There was an error processing your data. Please try again.");
+      toast.error(error.message || "Error processing data. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +92,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="sex"
@@ -122,7 +116,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="cp"
@@ -149,7 +142,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="trestbps"
@@ -163,7 +155,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="chol"
@@ -177,7 +168,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="fbs"
@@ -202,7 +192,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="restecg"
@@ -228,7 +217,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="thalach"
@@ -242,7 +230,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="exang"
@@ -267,7 +254,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="oldpeak"
@@ -275,18 +261,12 @@ const PredictionForm = () => {
                   <FormItem>
                     <FormLabel>ST Depression Induced by Exercise</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        step="0.1"
-                        placeholder="0"
-                        {...field}
-                      />
+                      <Input type="number" step="0.1" placeholder="0" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="slope"
@@ -312,7 +292,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="ca"
@@ -340,7 +319,6 @@ const PredictionForm = () => {
                   </FormItem>
                 )}
               />
-
               <FormField
                 control={form.control}
                 name="thal"
@@ -368,14 +346,6 @@ const PredictionForm = () => {
                 )}
               />
             </div>
-
-            {prediction && (
-              <div className="mt-6 p-4 bg-green-100 text-green-800 rounded">
-                <h3 className="font-semibold">Prediction Result</h3>
-                <p>Heart Attack Risk: {prediction}</p>
-              </div>
-            )}
-
             <CardFooter className="flex justify-center pt-6 px-0">
               <Button
                 type="submit"
