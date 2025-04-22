@@ -61,7 +61,7 @@ const PredictionForm = () => {
       navigate('/results');
     } catch (error: any) {
       console.error("Error submitting form:", error);
-      toast.error(error.message || "Error processing data. Please try again.");
+      toast.error(error.message || "Failed to connect to the server. Please ensure the backend is running and try again.");
     } finally {
       setIsSubmitting(false);
     }
